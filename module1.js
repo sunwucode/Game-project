@@ -73,13 +73,14 @@ function updateGameArea() {
 
   drawObstacles();
   player1.newPos();
+  player1.boundaries();
   player1.draw();
 }
 // Definition of the Player object / Ball class
 
 class Ball {
-  constructor(x, y, width, color) {
-    this.width = width;
+  constructor(x, y, radius, color) {
+    this.radius = radius;
     this.color = color;
     this.x = x;
     this.y = y;
@@ -92,12 +93,21 @@ class Ball {
     //myGameArea.ctx.fillStyle = this.color;
     myGameArea.ctx.fillStyle = currentColor;
     myGameArea.ctx.beginPath();
-    myGameArea.ctx.arc(this.x, this.y, this.width, 0, Math.PI * 2);
+    // ctx.arc(x, y, radius, startAngle, endAngle)
+    myGameArea.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     myGameArea.ctx.fill();
   }
   newPos() {
     this.x += this.speedX;
     this.y += this.speedY;
+  }
+  boundaries() {
+    if (this.y + this.speedY > canvas.height || this.y + this.speedY < 0) {
+      this.speedY = 0;
+    }
+    if (this.x + this.speedX > canvas.width || this.x + this.speedX < 0) {
+      this.speedX = 0;
+    }
   }
 }
 myGameArea.start();
