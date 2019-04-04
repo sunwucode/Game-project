@@ -1,12 +1,16 @@
 // General Setting
 
+var currentColor = "black";
+
 var myGameArea = {
   canvas: document.getElementById("canvas"),
   containedObjects: [],
   setCanvas: function() {
     this.canvas.width = canvas.scrollWidth;
     this.canvas.height = canvas.scrollHeight;
+    this.canvas.color = canvas.color;
     this.ctx = canvas.getContext("2d");
+
     this.interval = setInterval(updateGameArea, 100);
   },
   listenKeyboard: function() {
@@ -23,6 +27,19 @@ var myGameArea = {
           break;
         case 39: // right arrow
           player1.speedX += 10;
+          break;
+        case 88: // key x
+          currentColor = currentColor === "black" ? "white" : "black";
+          // ternaire, très utile pour des attributions.
+          // containedObjects.map(function(item) {
+          //   if (item.color === "white") {
+          //     color = "black";
+          //   }
+          //   if (item.color === "black") {
+          //     color = "white";
+          //   }
+          //   console.log(item);
+          // });
           break;
       }
     };
@@ -53,6 +70,7 @@ function drawObstacles() {
 
 function updateGameArea() {
   myGameArea.clear();
+
   drawObstacles();
   player1.newPos();
   player1.draw();
@@ -71,7 +89,8 @@ class Ball {
     isblocked: false;
   }
   draw(context) {
-    myGameArea.ctx.fillStyle = this.color;
+    //myGameArea.ctx.fillStyle = this.color;
+    myGameArea.ctx.fillStyle = currentColor;
     myGameArea.ctx.beginPath();
     myGameArea.ctx.arc(this.x, this.y, this.width, 0, Math.PI * 2);
     myGameArea.ctx.fill();
@@ -95,16 +114,28 @@ player1.draw(myGameArea.ctx);
 // };
 
 // obstacles /////////////////////////////////////////////
-class Column {
-  constructor(x, y, width, height) {
+class Shapes {
+  constructor(x, y, width, height, color) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    this.color = color;
   }
   draw() {
+    myGameArea.ctx.fillStyle = currentColor;
     myGameArea.ctx.fillRect(this.x, this.y, this.width, this.height);
   }
+}
+
+class Column extends Shapes {
+  constructor(x, y, width, height, color) {
+    super(x, y, width, height, color);
+  }
+  // draw() {
+  //   myGameArea.ctx.fillStyle = currentColor;
+  //   myGameArea.ctx.fillRect(this.x, this.y, this.width, this.height);
+  // } not necessary
 }
 //first obstacle
 drawObstacles();
@@ -135,4 +166,28 @@ class movingPlateform {}
 
 // function update() {
 //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+// }
+
+// window.onclick = function() {
+//   currentColor = "yellow";
+// };
+
+// Collision
+// -----------------------------------------------------------------------------
+// function rectangleCollision(player1, rectB) {
+//   return (
+//     player1.y + player1.height >= rectB.y &&
+//     player1.y <= rectB.y + rectB.height &&
+//     player1.x + player1.width >= rectB.x &&
+//     player1.x <= rectB.x + rectB.width
+//   );
+// }
+
+// function checkCrashes() {
+//   allPipes.forEach(function(onePipe) {
+//     if (rectangleCollision(celine, onePipe)) {
+//       celine.isCrashed = true;
+//       onePipe.isCrashed = true;
+//     }
+//   });
 // }
