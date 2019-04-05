@@ -14,6 +14,12 @@ var myGameArea = {
 
     this.interval = setInterval(updateGameArea, 100);
   },
+  getWidth: function() {
+    return this.canvas.width;
+  },
+  getHeight: function() {
+    return this.canvas.height;
+  },
   listenKeyboard: function() {
     document.onkeydown = function(event) {
       switch (event.keyCode) {
@@ -90,20 +96,61 @@ class Ball {
       // console.log("obstX", obstX);
       return ballX + balRadius >= obstX;
     }
-    // console.log("thisX", this.x);
-    for (let i = 0; i < myGameArea.containedObjects.length; i++) {
-      // console.log(myGameArea.containedObjects[i]);
 
-      if (
-        checkXvalid(
-          this.x,
-          this.radius,
-          myGameArea.containedObjects[i].x,
-          myGameArea.containedObjects[i].width
-        )
-      ) {
-        this.y += this.speedY;
-      } else {
+    function checkYvalid(bally, balRadius, obstY, obstHeight) {
+      return bally + balRadius <= obstY || bally + balRadius >= obstY;
+    }
+
+    function checkBorders(x, y, r) {
+      return (
+        x >= 0 &&
+        x <= myGameArea.getWidth() &&
+        y >= 0 &&
+        y <= myGameArea.getHeight()
+      );
+    }
+    console.log(checkBorders(this.x, this.y, this.radius));
+
+    if (!checkBorders(this.x, this.y, this.radius)) {
+      this.x = this.radius;
+      return;
+    } else {
+      // console.log("thisX", this.x);
+      var hasObst = false;
+      for (let i = 0; i < myGameArea.containedObjects.length; i++) {
+        // console.log(myGameArea.containedObjects[i]);
+        hasObst = true;
+        if (
+          // checkXvalid(
+          //   this.x,
+          //   this.radius,
+          //   myGameArea.containedObjects[i].x,
+          //   myGameArea.containedObjects[i].width
+          // ) &&
+          // checkYvalid(
+          //   this.y,
+          //   this.radius,
+          //   myGameArea.containedObjects[i].y,
+          //   myGameArea.containedObjects[i].height
+          // )
+
+          this.y + this.radius >= myGameArea.containedObjects[i].y &&
+          this.y <=
+            myGameArea.containedObjects[i].y +
+              myGameArea.containedObjects[i].height &&
+          this.x + this.radius >= myGameArea.containedObjects[i].x &&
+          this.x <=
+            myGameArea.containedObjects[i].x +
+              myGameArea.containedObjects[i].width
+        ) {
+          this.x -= 2;
+        } else {
+          this.x += this.speedX;
+          this.y += this.speedY;
+        }
+      }
+
+      if (!hasObst) {
         this.x += this.speedX;
         this.y += this.speedY;
       }
